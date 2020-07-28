@@ -1,0 +1,21 @@
+{{ $sectionPages := where .context.Site.Pages ".Section" "learn" }}
+{{ $modules := where $sectionPages ".Layout" "module" }}
+{{ $topics := where $sectionPages ".Layout" "topic" }}
+{{ $modulePath := path.Dir .module.Path }}
+{{ $moduleTopics := slice }}
+{{ $optionalTopic := .topic}}
+
+{{ range $topics }}
+    {{ $topicPath := path.Dir .Path }}
+    {{ if hasPrefix $topicPath $modulePath }}
+        {{ $moduleTopics = $moduleTopics | append . }}
+    {{ end }}
+{{ end }}
+
+<ul class="p-0">
+    {{ range sort $moduleTopics ".Params.index" }}
+        <li class="list-none px-4 p-2 {{ if eq $optionalTopic . }} font-bold {{ end }}">
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </li>
+    {{ end }}
+</ul>
